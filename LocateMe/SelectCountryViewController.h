@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @protocol SelectCountryDelegate <NSObject>
-- (void)currentCountryDidChanged;
+- (void)currentCountryDidChangeTo:(NSString *)newCountry;
 @end
 
 @interface SelectCountryViewController : UIViewController

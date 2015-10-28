@@ -7,16 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E40E65591BCF028200968DC3 /* SelectCountryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E40E65581BCF028200968DC3 /* SelectCountryViewController.m */; settings = {ASSET_TAGS = (); }; };
+		E40E65591BCF028200968DC3 /* SelectCountryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E40E65581BCF028200968DC3 /* SelectCountryViewController.m */; };
 		E48B9B421BCD5305009F0EE9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E48B9B411BCD5305009F0EE9 /* main.m */; };
 		E48B9B451BCD5305009F0EE9 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E48B9B441BCD5305009F0EE9 /* AppDelegate.m */; };
 		E48B9B4B1BCD5305009F0EE9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E48B9B491BCD5305009F0EE9 /* Main.storyboard */; };
 		E48B9B501BCD5305009F0EE9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E48B9B4F1BCD5305009F0EE9 /* Assets.xcassets */; };
 		E48B9B531BCD5305009F0EE9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E48B9B511BCD5305009F0EE9 /* LaunchScreen.storyboard */; };
-		E48B9B5C1BCD5361009F0EE9 /* MyLocationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E48B9B5B1BCD5361009F0EE9 /* MyLocationViewController.m */; settings = {ASSET_TAGS = (); }; };
+		E48B9B5C1BCD5361009F0EE9 /* MyLocationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E48B9B5B1BCD5361009F0EE9 /* MyLocationViewController.m */; };
 		E48B9B5E1BCD542A009F0EE9 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E48B9B5D1BCD542A009F0EE9 /* MapKit.framework */; };
-		E48B9B621BCD54FF009F0EE9 /* world-stripped.kml in Resources */ = {isa = PBXBuildFile; fileRef = E48B9B611BCD54FF009F0EE9 /* world-stripped.kml */; settings = {ASSET_TAGS = (); }; };
-		E4E484FF1BCE2F6500061FB2 /* KMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = E4E484FE1BCE2F6500061FB2 /* KMLParser.m */; settings = {ASSET_TAGS = (); }; };
+		E48B9B621BCD54FF009F0EE9 /* world-stripped.kml in Resources */ = {isa = PBXBuildFile; fileRef = E48B9B611BCD54FF009F0EE9 /* world-stripped.kml */; };
+		E4E484FF1BCE2F6500061FB2 /* KMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = E4E484FE1BCE2F6500061FB2 /* KMLParser.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */

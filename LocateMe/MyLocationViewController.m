@@ -28,7 +28,9 @@
 @end
 
 @implementation MyLocationViewController {
+    // Flag indicates that all MKMapView needs have been rendered on the screen before you can change its region
     BOOL _firstInitialization;
+    
     BOOL _kmlIsParsed;
     BOOL _currentCountryChanged;
 }
@@ -58,10 +60,8 @@
         self.kmlParser = [[KMLParser alloc] initWithURL:url];
         self.kmlParser.delegate = self;
         
-        // Parse KML file in a background thread
-        [[NSOperationQueue new] addOperationWithBlock:^{
-            [self.kmlParser parseKML];
-        }];
+        // Parse KML file
+        [self.kmlParser parseKML];
     }
 }
 
@@ -76,11 +76,15 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    if (!_firstInitialization)
+    if (!_firstInitialization) {
         _firstInitialization = YES;
+        
+        [self centerMapView];
+    }
     
     if (_kmlIsParsed && _currentCountryChanged) {
-        [self performSelector:@selector(zoomMap) withObject:nil afterDelay:0.2f];
+        // Call zoomMap method with delay just for fancy reasons
+        [self performSelector:@selector(centerMapView) withObject:nil afterDelay:0.2f];
     }
 }
 
@@ -132,9 +136,9 @@
     }
 }
 
-- (void)zoomMap {
-    // Zoom to fetched MKOverlay objects
-    if (!MKMapRectIsNull(self.visibleMapRect) && _firstInitialization) {
+- (void)centerMapView {
+    // Center the map to br visible over current country
+    if (!MKMapRectIsNull(self.visibleMapRect)) {
         [self.mapView setVisibleMapRect:self.visibleMapRect edgePadding:UIEdgeInsetsMake(80.0, 80.0, 80.0, 80.0) animated:YES];
     }
 }
@@ -179,7 +183,7 @@
             // Set selected country
             self.currentCountry = overlay.title;
             
-            // Save current country to user defautls
+            // Save current country to user defaults
             [[NSUserDefaults standardUserDefaults] setObject:overlay.title forKey:@"currentCountry"];
             [[NSUserDefaults standardUserDefaults] synchronize];
             
@@ -250,12 +254,8 @@
 - (void)parsingDidFinished:(NSError *)error {
     if (!error) {
         // Update UI on main thread
-        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-            [self hideActivityIndicator];
-            [self processKMLData];
-            
-            [self zoomMap];
-        }];
+        [self hideActivityIndicator];
+        [self processKMLData];
     }
     
     _kmlIsParsed = YES;
@@ -263,8 +263,12 @@
 
 #pragma mark - Select country  delegate
 
-- (void)currentCountryDidChanged {
-    _currentCountryChanged = YES;
+- (void)currentCountryDidChangeTo:(NSString *)newCountry {
+     _currentCountryChanged = YES;
+
+    // Save new selected country to user defaults
+    [[NSUserDefaults standardUserDefaults] setObject:newCountry forKey:@"currentCountry"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
     
     // Hide overlay view by moving its Y position
     self.overlayViewTopConstr.constant = -self.overlayView.bounds.size.height;

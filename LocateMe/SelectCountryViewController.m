@@ -15,6 +15,7 @@
 
 @property (nonatomic) NSArray *filteredCountriesArray;
 @property (nonatomic) NSMutableArray *sections;
+@property (nonatomic) NSMutableArray *countriesSections;
 @property (nonatomic) UIBarButtonItem *doneBtn;
 
 @end
@@ -39,12 +40,19 @@
     // Initialize arrays
     self.filteredCountriesArray = self.countries;
     self.sections = [NSMutableArray array];
+    self.countriesSections = [NSMutableArray array];
     
     // Set sections
     for (NSString *country in self.countries) {
         NSString *key = [[country substringToIndex:1] uppercaseString];
         if (![self.sections containsObject:key])
             [self.sections addObject:key];
+    }
+    
+    // Set Countries sections
+    for (NSString *key in self.sections) {
+        NSArray *countriesSection = [self.countries filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF beginswith[c] %@",key]];
+        [self.countriesSections addObject:countriesSection];
     }
 }
 
@@ -64,10 +72,11 @@
 
 - (void)scrollToCountry:(NSString *)countryName withAnimation:(BOOL)animated {
     NSString *key = [[countryName substringToIndex:1] uppercaseString];
-    NSArray *sectionArray = [self.countries filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF beginswith[c] %@", key]];
-    
-    NSUInteger idx = [sectionArray indexOfObject:self.currentCountry];
-    [self.tableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:idx inSection:[self.sections indexOfObject:key]] animated:animated scrollPosition:UITableViewScrollPositionTop];
+    NSUInteger sectionIdx = [self.sections indexOfObject:key];
+    if (sectionIdx != NSNotFound) {
+        NSUInteger rowIdx = [self.countriesSections[sectionIdx] indexOfObject:self.currentCountry];
+        [self.tableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:rowIdx inSection:sectionIdx] animated:animated scrollPosition:UITableViewScrollPositionTop];
+    }
 }
 
 #pragma mark - Actions
@@ -83,12 +92,8 @@
     [self.view endEditing:NO];
     
     // Trigger delgate
-    if ([self.delegate respondsToSelector:@selector(currentCountryDidChanged)])
-        [self.delegate currentCountryDidChanged];
-    
-    // Save current country to user defautls
-    [[NSUserDefaults standardUserDefaults] setObject:self.currentCountry forKey:@"currentCountry"];
-    [[NSUserDefaults standardUserDefaults] synchronize];
+    if ([self.delegate respondsToSelector:@selector(currentCountryDidChangeTo:)])
+        [self.delegate currentCountryDidChangeTo:self.currentCountry];
     
     [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
 }
@@ -100,13 +105,10 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (!_filteredMode) {
-        NSArray *sectionArray = [self.countries filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF beginswith[c] %@", [self.sections objectAtIndex:section]]];
-        
-        return sectionArray.count;
-    }
+    if (_filteredMode)
+        return self.filteredCountriesArray.count;
     
-    return self.filteredCountriesArray.count;
+    return [self.countriesSections[section] count];
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
@@ -118,9 +120,7 @@
     
     NSString *countryName;
     if (!_filteredMode) {
-        NSArray *sectionArray = [self.countries filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF beginswith[c] %@", [self.sections objectAtIndex:indexPath.section]]];
-        
-        countryName = [sectionArray objectAtIndex:indexPath.row];
+        countryName = self.countriesSections[indexPath.section][indexPath.row];
     } else {
         countryName = [self.filteredCountriesArray objectAtIndex:indexPath.row];
     }
@@ -143,9 +143,7 @@
     
     // Find selected country
     if (!_filteredMode) {
-        NSArray *sectionArray = [self.countries filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF beginswith[c] %@", [self.sections objectAtIndex:indexPath.section]]];
-        
-        self.currentCountry = [sectionArray objectAtIndex:indexPath.row];
+        self.currentCountry = self.countriesSections[indexPath.section][indexPath.row];
     } else {
         self.currentCountry = [self.filteredCountriesArray objectAtIndex:indexPath.row];
         
